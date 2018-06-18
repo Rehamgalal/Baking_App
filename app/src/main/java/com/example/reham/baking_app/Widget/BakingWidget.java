@@ -37,10 +37,8 @@ public class BakingWidget extends AppWidgetProvider {
         Log.i("id", ""+id+ingredients);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_widget);
         views.setTextViewText(R.id.widget_text_view, ingredients);
-
         Intent intent = new Intent(context, RecipeDetails.class);
         int Id=Integer.parseInt(id);
-
         intent.putExtra("id",Id);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,0 , intent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.widget_text_view, pendingIntent);

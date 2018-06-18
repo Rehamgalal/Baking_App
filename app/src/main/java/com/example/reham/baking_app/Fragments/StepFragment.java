@@ -1,12 +1,10 @@
 package com.example.reham.baking_app.Fragments;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,36 +12,31 @@ import android.widget.TextView;
 
 import com.example.reham.baking_app.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 /**
  * Created by reham on 6/8/2018.
  */
 
-public class StepFragment extends Fragment implements ExoPlayer.EventListener {
+public class StepFragment extends Fragment {
 
-    SimpleExoPlayerView exoPlayerView;
-    private static MediaSessionCompat mMediaSession;
-    private PlaybackStateCompat.Builder mStateBuilder;
+    private SimpleExoPlayer player;
+    private PlayerView playerView;
+    boolean mOnePane;
+    private long playbackPosition;
+    private int currentWindow;
+    private boolean playWhenReady = true;
     public StepFragment() {
     }
 
-    SimpleExoPlayer exoPlayer;
     String Content;
 
     @Nullable
@@ -52,148 +45,90 @@ public class StepFragment extends Fragment implements ExoPlayer.EventListener {
 
         View rootView = inflater.inflate(R.layout.fragment_steps, container, false);
         TextView textView = rootView.findViewById(R.id.description_view);
-        exoPlayerView = rootView.findViewById(R.id.video_player);
+        playerView =(PlayerView) rootView.findViewById(R.id.video_player);
+        if (getArguments().getString("mTwoPane") != null&& getArguments().getString("mTwoPane").equals("onePane") ) {
+            mOnePane=true;
+        }else {mOnePane=false;}
+        if (getArguments().getString("description") != null && !getArguments().getString("description").equals("")) {
         String description = getArguments().getString("description");
-        textView.setText(description);
+        textView.setText(description);}
         if (getArguments().getString("videoURL") != null && !getArguments().getString("videoURL").equals("")) {
-
             Content = getArguments().getString("videoURL");
-            initializeMediaSession();
             Uri uri = Uri.parse(Content);
             initializePlayer(uri);
         } else if (getArguments().getString("thumbnail") != null && !getArguments().getString("thumbnail").equals("")) {
             Content = getArguments().getString("thumbnail");
-            initializeMediaSession();
             initializePlayer(Uri.parse(Content));
         } else {
-            exoPlayerView.setVisibility(View.INVISIBLE);
+            playerView.setVisibility(View.INVISIBLE);
         }
 
         return rootView;
     }
 
-    private void initializeMediaSession() {
-
-        // Create a MediaSessionCompat.
-        mMediaSession = new MediaSessionCompat(getActivity(), "StepFrgment");
-
-        // Enable callbacks from MediaButtons and TransportControls.
-        mMediaSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
-        // Do not let MediaButtons restart the player when the app is not visible.
-        mMediaSession.setMediaButtonReceiver(null);
-
-        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player.
-        mStateBuilder = new PlaybackStateCompat.Builder()
-                .setActions(
-                        PlaybackStateCompat.ACTION_PLAY |
-                                PlaybackStateCompat.ACTION_PAUSE |
-                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
-
-        mMediaSession.setPlaybackState(mStateBuilder.build());
-
-
-        // MySessionCallback has methods that handle callbacks from a media controller.
-        mMediaSession.setCallback(new MySessionCallback());
-
-        // Start the Media Session since the activity is active.
-        mMediaSession.setActive(true);
+    @Override
+    public void onStart() {
+        super.onStart();
 
     }
-    private void initializePlayer(Uri mediaUri) {
-        if (exoPlayer== null) {
-            // Create an instance of the ExoPlayer.
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            LoadControl loadControl = new DefaultLoadControl();
-            exoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
-            exoPlayerView.setPlayer(exoPlayer);
 
-            // Set the ExoPlayer.EventListener to this activity.
-            exoPlayer.addListener(this);
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mOnePane) hideSystemUi();
 
-            // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(getActivity(), "ClassicalMusicQuiz");
-            MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                    getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
-            exoPlayer.prepare(mediaSource);
-            exoPlayer.setPlayWhenReady(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+           releasePlayer();
         }
     }
 
-    // ExoPlayer Event Listeners
-
     @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
-    }
-
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-    }
-
-    @Override
-    public void onLoadingChanged(boolean isLoading) {
-    }
-
-    /**
-     * Method that is called when the ExoPlayer state changes. Used to update the MediaSession
-     * PlayBackState to keep in sync, and post the media notification.
-     * @param playWhenReady true if ExoPlayer is playing, false if it's paused.
-     * @param playbackState int describing the state of ExoPlayer. Can be STATE_READY, STATE_IDLE,
-     *                      STATE_BUFFERING, or STATE_ENDED.
-     */
-    @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if((playbackState == ExoPlayer.STATE_READY) && playWhenReady){
-            mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
-                    exoPlayer.getCurrentPosition(), 1f);
-        } else if((playbackState == ExoPlayer.STATE_READY)){
-            mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
-                    exoPlayer.getCurrentPosition(), 1f);
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+          releasePlayer();
         }
-        mMediaSession.setPlaybackState(mStateBuilder.build());
     }
 
-    @Override
-    public void onPlayerError(ExoPlaybackException error) {
+    private void initializePlayer(Uri uri) {
+        if (player == null) {
+            player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getActivity()),
+                    new DefaultTrackSelector(), new DefaultLoadControl());
+            playerView.setPlayer(player);
+            player.setPlayWhenReady(playWhenReady);
+            player.seekTo(currentWindow, playbackPosition);
+        }
+        MediaSource mediaSource = buildMediaSource(uri);
+        player.prepare(mediaSource, true, false);
     }
-
-    @Override
-    public void onPositionDiscontinuity() {
-    }
-
-
 
     private void releasePlayer() {
-        exoPlayer.stop();
-        exoPlayer.release();
-        exoPlayer = null;
+        if (player != null) {
+            playbackPosition = player.getCurrentPosition();
+            currentWindow = player.getCurrentWindowIndex();
+            playWhenReady = player.getPlayWhenReady();
+            player.release();
+            player = null;
+        }
     }
 
-    @Override
-   public void onDestroy() {
-        super.onDestroy();
-
-        mMediaSession.setActive(false);
+    private MediaSource buildMediaSource(Uri uri) {
+        return new ExtractorMediaSource.Factory(new DefaultHttpDataSourceFactory("exoplayer-codelab"))
+                .createMediaSource(uri);
     }
 
-
-    private class MySessionCallback extends MediaSessionCompat.Callback {
-        @Override
-        public void onPlay() {
-            exoPlayer.setPlayWhenReady(true);
-        }
-
-        @Override
-        public void onPause() {
-            exoPlayer.setPlayWhenReady(false);
-        }
-
-        @Override
-        public void onSkipToPrevious() {
-            exoPlayer.seekTo(0);
-        }
+    @SuppressLint("InlinedApi")
+    private void hideSystemUi() {
+        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 }

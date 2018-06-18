@@ -31,6 +31,8 @@ android.support.v4.app.FragmentManager manager;
         position= i.getIntExtra("position",0);
        description=i.getStringArrayListExtra("description");
        Bundle bundle= new Bundle();
+       String mTwoPane="onePane";
+       bundle.putString("mTwoPane",mTwoPane);
        bundle.putString("description",""+description.get(position));
         if (i.getStringArrayListExtra("videoURL")!=null&& !i.getStringArrayListExtra("videoURL").equals("")){
             videos= i.getStringArrayListExtra("videoURL");

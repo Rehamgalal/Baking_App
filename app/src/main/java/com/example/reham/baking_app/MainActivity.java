@@ -1,6 +1,9 @@
 package com.example.reham.baking_app;
 
 
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -24,12 +27,14 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView RC;
     List<String> names;
     List<Integer> Ids;
+    BakingIdlingResource mIdlingResource;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getIdlingResource();
         ButterKnife.bind(this);
-        RC = findViewById(R.id.recyler_view);
+        RC = findViewById(R.id.recycler_view);
         RC.setLayoutManager(new GridLayoutManager(this,1));
         RC.setHasFixedSize(true);
         getData();
@@ -49,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("thelist",""+names.toString());
                 RecipesAdapter recipesAdapter= new RecipesAdapter(getApplicationContext(),names,Ids);
                 RC.setAdapter(recipesAdapter);
+                if (mIdlingResource != null) {
+                    mIdlingResource.setIdleState(true);
+                }
             }
 
             @Override
@@ -56,5 +64,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("onFailure",t.getMessage());
             }
         });
+    }
+    @VisibleForTesting
+    @Nullable
+    public IdlingResource getIdlingResource(){
+        if(mIdlingResource == null){
+            mIdlingResource = new BakingIdlingResource();
+            mIdlingResource.setIdleState(false);
+        }
+        return mIdlingResource;
     }
 }

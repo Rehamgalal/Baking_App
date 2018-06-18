@@ -94,6 +94,7 @@ public class RecipeDescriptionFragment extends Fragment {
                    sb.append(ingredient+"\n");
                 }
                 mSteps.add(sb.toString());
+                longDescription.add(sb.toString());
                 List<RecipeDetails> steps= response.body().get(id).getSteps();
                 for(int o = 0;o<steps.size();o++){
                     String step= steps.get(o).getShortDescription();
@@ -123,7 +124,7 @@ public class RecipeDescriptionFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Trigger the callback method and pass in the position that was clicked
-                mCallback.onStepSelected(position,mSteps,videoURL,thumbnailURL);
+                mCallback.onStepSelected(position,longDescription,videoURL,thumbnailURL);
             }
         });
 
