@@ -1,6 +1,7 @@
 package com.example.reham.baking_app.Fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,14 +9,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.reham.baking_app.R;
 import com.example.reham.baking_app.Strings;
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -23,7 +20,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -40,7 +36,7 @@ public class StepFragment extends Fragment implements Strings {
     private long playbackPosition;
     private int currentWindow;
     private boolean playWhenReady = true;
-
+    String description;
     public StepFragment() {
     }
 
@@ -53,18 +49,14 @@ public class StepFragment extends Fragment implements Strings {
         View rootView = inflater.inflate(R.layout.fragment_steps, container, false);
         TextView textView = rootView.findViewById(R.id.description_view);
         playerView = (PlayerView) rootView.findViewById(R.id.video_player);
-        if(savedInstanceState!=null){
-           currentWindow= savedInstanceState.getInt("current window");
-           playbackPosition=savedInstanceState.getLong("current position");
-           playWhenReady=savedInstanceState.getBoolean("ready");
-        }
+     if (savedInstanceState==null){
         if (getArguments().getString(mTwoPaneText) != null && getArguments().getString(mTwoPaneText).equals("onePane")) {
             mOnePane = true;
         } else {
             mOnePane = false;
         }
         if (getArguments().getString(descriptionText) != null && !getArguments().getString(descriptionText).equals("")) {
-            String description = getArguments().getString(descriptionText);
+            description = getArguments().getString(descriptionText);
             textView.setText(description);
         }
         if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals(NO_VIDEO)) {
@@ -74,9 +66,22 @@ public class StepFragment extends Fragment implements Strings {
         } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals(NO_VIDEO)) {
             Content = getArguments().getString(thumbnailUrlText);
             initializePlayer();
-        }
+        }}
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState!=null){
+            currentWindow= savedInstanceState.getInt("current window");
+            playbackPosition=savedInstanceState.getLong("current position");
+            playWhenReady=savedInstanceState.getBoolean("ready");
+            description=savedInstanceState.getString("description");
+            Content=savedInstanceState.getString("content");
+            initializePlayer();
+        }
     }
 
     @Override
@@ -101,7 +106,6 @@ public class StepFragment extends Fragment implements Strings {
             mOnePane = true;
 
           if (mOnePane) hideSystemUi();
-
         }
         if ((Util.SDK_INT <= 23 || player == null)) {
             if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals(NO_VIDEO)) {
@@ -171,5 +175,8 @@ public class StepFragment extends Fragment implements Strings {
         outState.putBoolean("ready",playWhenReady);
         outState.putLong("current position",playbackPosition);
         outState.putInt("current window",currentWindow);
+        outState.putString("description",description);
+        outState.putString("content", Content);
+        super.onSaveInstanceState(outState);
     }
 }

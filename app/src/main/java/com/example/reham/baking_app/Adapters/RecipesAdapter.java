@@ -23,7 +23,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
     Context mContext;
     List<String> recipesNames;
 
-    public RecipesAdapter(Context context, List<String> names, List<Integer> ids) {
+    public RecipesAdapter(Context context, List<String> names) {
         mContext = context;
         recipesNames = names;
     }

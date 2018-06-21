@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.reham.baking_app.Adapters.RecipesAdapter;
@@ -27,7 +26,6 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements Strings {
     RecyclerView RC;
     List<String> names;
-    List<Integer> Ids;
     BakingIdlingResource mIdlingResource;
 
     @Override
@@ -39,7 +37,16 @@ public class MainActivity extends AppCompatActivity implements Strings {
         RC = findViewById(R.id.recycler_view);
         RC.setLayoutManager(new GridLayoutManager(this, 1));
         RC.setHasFixedSize(true);
-        getData();
+        if(savedInstanceState==null){
+        getData();}
+        else if (savedInstanceState!=null){
+           names= savedInstanceState.getStringArrayList("names");
+           RecipesAdapter recipesAdapter= new RecipesAdapter(this,names);
+            RC.setAdapter(recipesAdapter);
+            if (mIdlingResource != null) {
+                mIdlingResource.setIdleState(true);
+            }
+        }
     }
 
     public void getData() {
@@ -49,12 +56,11 @@ public class MainActivity extends AppCompatActivity implements Strings {
             @Override
             public void onResponse(Call<List<Recipes>> call, Response<List<Recipes>> response) {
                 names = new ArrayList<>();
-                Ids = new ArrayList<>();
                 for (int i = 0; i < 4; i++) {
                     String name = response.body().get(i).getRecipeName();
                     names.add(name);
                 }
-                RecipesAdapter recipesAdapter = new RecipesAdapter(getApplicationContext(), names, Ids);
+                RecipesAdapter recipesAdapter = new RecipesAdapter(getApplicationContext(), names);
                 RC.setAdapter(recipesAdapter);
                 if (mIdlingResource != null) {
                     mIdlingResource.setIdleState(true);
@@ -76,5 +82,11 @@ public class MainActivity extends AppCompatActivity implements Strings {
             mIdlingResource.setIdleState(false);
         }
         return mIdlingResource;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putStringArrayList("names",(ArrayList<String>) names);
+        super.onSaveInstanceState(outState);
     }
 }

@@ -22,13 +22,26 @@ public class StepActivity extends AppCompatActivity implements Strings {
     ArrayList<String> videos;
     ArrayList<String> thumnailURL;
     android.support.v4.app.FragmentManager manager;
+    StepFragment stepFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step);
         ButterKnife.bind(this);
+        final String SIMPLE_FRAGMENT_TAG = "myfragmenttag";
         final Intent i = getIntent();
+        if (savedInstanceState!=null){
+            stepFragment = (StepFragment)
+                    getSupportFragmentManager().findFragmentByTag(SIMPLE_FRAGMENT_TAG);
+            if (!stepFragment.isInLayout()) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, stepFragment, SIMPLE_FRAGMENT_TAG)
+                        .commit();
+            }
+        }else{
+
         position = i.getIntExtra(positionText, 0);
         description = i.getStringArrayListExtra(descriptionText);
         Bundle bundle = new Bundle();
@@ -43,10 +56,10 @@ public class StepActivity extends AppCompatActivity implements Strings {
             bundle.putString(thumbnailUrlText, thumnailURL.get(position - 1));
         }
 
-        StepFragment stepFragment = new StepFragment();
+        stepFragment = new StepFragment();
         manager = getSupportFragmentManager();
         stepFragment.setArguments(bundle);
-        manager.beginTransaction().add(R.id.fragment_container, stepFragment).commit();
+        manager.beginTransaction().add(R.id.fragment_container, stepFragment,SIMPLE_FRAGMENT_TAG).commit();}
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,9 +72,9 @@ public class StepActivity extends AppCompatActivity implements Strings {
                     b.putString(VideoUrlText, videos.get(position - 1));
                     ArrayList<String> thumnailURL = i.getStringArrayListExtra(thumbnailUrlText);
                     b.putString(thumbnailUrlText, thumnailURL.get(position - 1));
-                    StepFragment stepFragment = new StepFragment();
-                    stepFragment.setArguments(b);
-                    manager.beginTransaction().replace(R.id.fragment_container, stepFragment).commit();
+                    StepFragment stepFragment1 = new StepFragment();
+                    stepFragment1.setArguments(b);
+                    manager.beginTransaction().replace(R.id.fragment_container, stepFragment1,SIMPLE_FRAGMENT_TAG).commit();
                 }
             }
         });
