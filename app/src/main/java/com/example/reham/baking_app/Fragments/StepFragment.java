@@ -55,30 +55,43 @@ public class StepFragment extends Fragment {
         if (getArguments().getString("videoURL") != null && !getArguments().getString("videoURL").equals("")) {
             Content = getArguments().getString("videoURL");
             Uri uri = Uri.parse(Content);
-            initializePlayer(uri);
+            initializePlayer();
         } else if (getArguments().getString("thumbnail") != null && !getArguments().getString("thumbnail").equals("")) {
             Content = getArguments().getString("thumbnail");
-            initializePlayer(Uri.parse(Content));
-        } else {
-            playerView.setVisibility(View.INVISIBLE);
-        }
+            initializePlayer();
+        } 
 
         return rootView;
     }
-
     @Override
     public void onStart() {
         super.onStart();
+        if (Util.SDK_INT > 23) {
+            if (getArguments().getString("videoURL") != null && !getArguments().getString("videoURL").equals("")) {
+                Content = getArguments().getString("videoURL");
+                Uri uri = Uri.parse(Content);
+                initializePlayer();
+            } else if (getArguments().getString("thumbnail") != null && !getArguments().getString("thumbnail").equals("")) {
+                Content = getArguments().getString("thumbnail");
+                initializePlayer();
+            } else {
+                playerView.setVisibility(View.INVISIBLE);
+            }} }
 
-    }
-
-    @Override
-    public void onResume() {
+    @Override public void onResume() {
         super.onResume();
-        if(mOnePane) hideSystemUi();
-
-    }
-
+        hideSystemUi();
+        if ((Util.SDK_INT <= 23 || player == null))
+        {    if (getArguments().getString("videoURL") != null && !getArguments().getString("videoURL").equals("")) {
+            Content = getArguments().getString("videoURL");
+            Uri uri = Uri.parse(Content);
+            initializePlayer();
+        } else if (getArguments().getString("thumbnail") != null && !getArguments().getString("thumbnail").equals("")) {
+            Content = getArguments().getString("thumbnail");
+            initializePlayer();
+        } else {
+            playerView.setVisibility(View.INVISIBLE);
+        }} }
     @Override
     public void onPause() {
         super.onPause();
@@ -95,7 +108,7 @@ public class StepFragment extends Fragment {
         }
     }
 
-    private void initializePlayer(Uri uri) {
+    private void initializePlayer() {
         if (player == null) {
             player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getActivity()),
                     new DefaultTrackSelector(), new DefaultLoadControl());
@@ -103,7 +116,7 @@ public class StepFragment extends Fragment {
             player.setPlayWhenReady(playWhenReady);
             player.seekTo(currentWindow, playbackPosition);
         }
-        MediaSource mediaSource = buildMediaSource(uri);
+        MediaSource mediaSource = buildMediaSource(Uri.parse(Content));
         player.prepare(mediaSource, true, false);
     }
 
@@ -124,11 +137,6 @@ public class StepFragment extends Fragment {
 
     @SuppressLint("InlinedApi")
     private void hideSystemUi() {
-        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
     }
 }

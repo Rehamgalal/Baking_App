@@ -34,7 +34,6 @@ public class BakingWidget extends AppWidgetProvider {
         String[] wigetData = WidgetDataOnSharedPreferences.getWidgetDataFromSharedPreferences(context);
         String id= wigetData[0];
         String ingredients = wigetData[1];
-        Log.i("id", ""+id+ingredients);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_widget);
         views.setTextViewText(R.id.widget_text_view, ingredients);
         Intent intent = new Intent(context, RecipeDetails.class);
