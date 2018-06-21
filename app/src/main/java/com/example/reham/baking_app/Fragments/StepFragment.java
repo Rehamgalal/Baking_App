@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -91,13 +92,12 @@ public class StepFragment extends Fragment implements Strings {
         if (getArguments().getString(mTwoPaneText) != null && getArguments().getString(mTwoPaneText).equals("onePane")) {
             mOnePane = true;
 
-            // if (mOnePane) fullScreen();
+       //     if (mOnePane) fullScreen();
 
         }
         if ((Util.SDK_INT <= 23 || player == null)) {
             if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals(NO_VIDEO)) {
                 Content = getArguments().getString(VideoUrlText);
-                Uri uri = Uri.parse(Content);
                 initializePlayer();
             } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals(NO_VIDEO)) {
                 Content = getArguments().getString(thumbnailUrlText);
@@ -158,10 +158,8 @@ public class StepFragment extends Fragment implements Strings {
                 | View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_IMMERSIVE);
     }
- /*   private void fullScreen(){
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        params.setMargins(0,0,0,0);
-        playerView.setLayoutParams(params);
+    private void fullScreen(){
+        playerView.setLayoutParams(new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.MATCH_PARENT));
         hideSystemUi();
-    }*/
+    }
 }
