@@ -11,5 +11,4 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="TextSize">40sp</dimen>
     <dimen name="Padding">4dp</dimen>
     <dimen name="exoTextSize">14dp</dimen>
-
 </resources>

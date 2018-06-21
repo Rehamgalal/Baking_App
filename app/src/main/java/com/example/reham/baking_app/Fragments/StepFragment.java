@@ -9,11 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.reham.baking_app.R;
 import com.example.reham.baking_app.Strings;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -21,6 +23,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -50,6 +53,11 @@ public class StepFragment extends Fragment implements Strings {
         View rootView = inflater.inflate(R.layout.fragment_steps, container, false);
         TextView textView = rootView.findViewById(R.id.description_view);
         playerView = (PlayerView) rootView.findViewById(R.id.video_player);
+        if(savedInstanceState!=null){
+           currentWindow= savedInstanceState.getInt("current window");
+           playbackPosition=savedInstanceState.getLong("current position");
+           playWhenReady=savedInstanceState.getBoolean("ready");
+        }
         if (getArguments().getString(mTwoPaneText) != null && getArguments().getString(mTwoPaneText).equals("onePane")) {
             mOnePane = true;
         } else {
@@ -92,7 +100,7 @@ public class StepFragment extends Fragment implements Strings {
         if (getArguments().getString(mTwoPaneText) != null && getArguments().getString(mTwoPaneText).equals("onePane")) {
             mOnePane = true;
 
-       //     if (mOnePane) fullScreen();
+          if (mOnePane) hideSystemUi();
 
         }
         if ((Util.SDK_INT <= 23 || player == null)) {
@@ -128,7 +136,7 @@ public class StepFragment extends Fragment implements Strings {
                     new DefaultTrackSelector(), new DefaultLoadControl());
             playerView.setPlayer(player);
             player.setPlayWhenReady(playWhenReady);
-            player.seekTo(currentWindow, playbackPosition);
+            player.seekTo(currentWindow,playbackPosition);
         }
         MediaSource mediaSource = buildMediaSource(Uri.parse(Content));
         player.prepare(mediaSource, true, false);
@@ -145,21 +153,23 @@ public class StepFragment extends Fragment implements Strings {
     }
 
     private MediaSource buildMediaSource(Uri uri) {
-        return new ExtractorMediaSource.Factory(new DefaultHttpDataSourceFactory("exoplayer-codelab"))
+        return new ExtractorMediaSource.Factory(new DefaultHttpDataSourceFactory("Baking_App"))
                 .createMediaSource(uri);
     }
 
     @SuppressLint("InlinedApi")
     private void hideSystemUi() {
-        getActivity().getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
-    private void fullScreen(){
-        playerView.setLayoutParams(new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.MATCH_PARENT));
-        hideSystemUi();
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("ready",playWhenReady);
+        outState.putLong("current position",playbackPosition);
+        outState.putInt("current window",currentWindow);
     }
 }
