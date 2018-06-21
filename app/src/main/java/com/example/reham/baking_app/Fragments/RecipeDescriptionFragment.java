@@ -25,6 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.reham.baking_app.Strings.Failed;
+import static com.example.reham.baking_app.Strings.NO_VIDEO;
 
 /**
  * Created by reham on 6/6/2018.
@@ -104,6 +105,9 @@ public class RecipeDescriptionFragment extends Fragment {
                     String step = steps.get(o).getShortDescription();
                     String longDes = steps.get(o).getDescription();
                     String video = steps.get(o).getVideoURL();
+                    if(steps.get(o).getVideoURL().equals("")){
+                        video=NO_VIDEO;
+                    }
                     String thumbnail = steps.get(o).getThmbnaiURL();
                     mSteps.add(step);
                     longDescription.add(longDes);

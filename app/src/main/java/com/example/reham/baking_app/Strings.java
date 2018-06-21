@@ -16,5 +16,6 @@ public interface Strings {
     String INGREDIENTS_KEY = "package com.example.android.bakingapp.data.ingredients";
     int DEFAULT_ID = 0;
     String DEFAULT_INGREDIENTS = "Ingredients Name";
+    String NO_VIDEO="noVideo";
 
 }

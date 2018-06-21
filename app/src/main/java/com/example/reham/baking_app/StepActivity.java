@@ -37,10 +37,10 @@ public class StepActivity extends AppCompatActivity implements Strings {
         bundle.putString(descriptionText, "" + description.get(position));
         if (i.getStringArrayListExtra(VideoUrlText) != null && !i.getStringArrayListExtra(VideoUrlText).equals("")) {
             videos = i.getStringArrayListExtra(VideoUrlText);
-            bundle.putString(VideoUrlText, videos.get(position));
+            bundle.putString(VideoUrlText, videos.get(position-1));
         } else if (i.getStringArrayListExtra(thumbnailUrlText) != null && !i.getStringArrayListExtra(thumbnailUrlText).equals("")) {
             thumnailURL = i.getStringArrayListExtra(thumbnailUrlText);
-            bundle.putString(thumbnailUrlText, thumnailURL.get(position));
+            bundle.putString(thumbnailUrlText, thumnailURL.get(position-1));
         }
 
         StepFragment stepFragment = new StepFragment();
@@ -56,9 +56,9 @@ public class StepActivity extends AppCompatActivity implements Strings {
                     Bundle b = new Bundle();
                     b.putString(descriptionText, description.get(position));
                     ArrayList<String> videos = i.getStringArrayListExtra(VideoUrlText);
-                    b.putString(VideoUrlText, videos.get(position));
+                    b.putString(VideoUrlText, videos.get(position-1));
                     ArrayList<String> thumnailURL = i.getStringArrayListExtra(thumbnailUrlText);
-                    b.putString(thumbnailUrlText, thumnailURL.get(position));
+                    b.putString(thumbnailUrlText, thumnailURL.get(position-1));
                     StepFragment stepFragment = new StepFragment();
                     stepFragment.setArguments(b);
                     manager.beginTransaction().replace(R.id.fragment_container, stepFragment).commit();

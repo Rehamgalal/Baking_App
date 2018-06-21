@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.reham.baking_app.R;
@@ -57,11 +58,11 @@ public class StepFragment extends Fragment implements Strings {
             String description = getArguments().getString(descriptionText);
             textView.setText(description);
         }
-        if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals("")) {
+        if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals(NO_VIDEO)) {
             Content = getArguments().getString(VideoUrlText);
             Uri uri = Uri.parse(Content);
             initializePlayer();
-        } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals("")) {
+        } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals(NO_VIDEO)) {
             Content = getArguments().getString(thumbnailUrlText);
             initializePlayer();
         }
@@ -73,11 +74,11 @@ public class StepFragment extends Fragment implements Strings {
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals("")) {
+            if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals(NO_VIDEO)) {
                 Content = getArguments().getString(VideoUrlText);
                 Uri uri = Uri.parse(Content);
                 initializePlayer();
-            } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals("")) {
+            } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals(NO_VIDEO)) {
                 Content = getArguments().getString(thumbnailUrlText);
                 initializePlayer();
             }
@@ -87,13 +88,18 @@ public class StepFragment extends Fragment implements Strings {
     @Override
     public void onResume() {
         super.onResume();
-        if (mOnePane) hideSystemUi();
+        if (getArguments().getString(mTwoPaneText) != null && getArguments().getString(mTwoPaneText).equals("onePane")) {
+            mOnePane = true;
+
+            // if (mOnePane) fullScreen();
+
+        }
         if ((Util.SDK_INT <= 23 || player == null)) {
-            if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals("")) {
+            if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals(NO_VIDEO)) {
                 Content = getArguments().getString(VideoUrlText);
                 Uri uri = Uri.parse(Content);
                 initializePlayer();
-            } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals("")) {
+            } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals(NO_VIDEO)) {
                 Content = getArguments().getString(thumbnailUrlText);
                 initializePlayer();
             }
@@ -145,6 +151,17 @@ public class StepFragment extends Fragment implements Strings {
 
     @SuppressLint("InlinedApi")
     private void hideSystemUi() {
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        getActivity().getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE);
     }
+ /*   private void fullScreen(){
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        params.setMargins(0,0,0,0);
+        playerView.setLayoutParams(params);
+        hideSystemUi();
+    }*/
 }
