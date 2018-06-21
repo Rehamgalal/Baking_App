@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.reham.baking_app.Adapters.RecipesAdapter;
 import com.example.reham.baking_app.Retrofit.ApiClient;
@@ -23,11 +24,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Strings {
     RecyclerView RC;
     List<String> names;
     List<Integer> Ids;
     BakingIdlingResource mIdlingResource;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,24 +37,24 @@ public class MainActivity extends AppCompatActivity {
         getIdlingResource();
         ButterKnife.bind(this);
         RC = findViewById(R.id.recycler_view);
-        RC.setLayoutManager(new GridLayoutManager(this,1));
+        RC.setLayoutManager(new GridLayoutManager(this, 1));
         RC.setHasFixedSize(true);
         getData();
     }
-    public void getData(){
-        Retrofit2 apiService=ApiClient.getClient().create(Retrofit2.class);
-        Call<List<Recipes>> call=  apiService.getRecipe();
+
+    public void getData() {
+        Retrofit2 apiService = ApiClient.getClient().create(Retrofit2.class);
+        Call<List<Recipes>> call = apiService.getRecipe();
         call.enqueue(new Callback<List<Recipes>>() {
             @Override
             public void onResponse(Call<List<Recipes>> call, Response<List<Recipes>> response) {
-                names=new ArrayList<>();
-                Ids=new ArrayList<>();
-                for (int i = 0 ;i<4;i++)
-                {  String name = response.body().get(i).getRecipeName();
-                names.add(name);
+                names = new ArrayList<>();
+                Ids = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    String name = response.body().get(i).getRecipeName();
+                    names.add(name);
                 }
-                Log.e("thelist",""+names.toString());
-                RecipesAdapter recipesAdapter= new RecipesAdapter(getApplicationContext(),names,Ids);
+                RecipesAdapter recipesAdapter = new RecipesAdapter(getApplicationContext(), names, Ids);
                 RC.setAdapter(recipesAdapter);
                 if (mIdlingResource != null) {
                     mIdlingResource.setIdleState(true);
@@ -61,14 +63,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Recipes>> call, Throwable t) {
-                Log.e("onFailure",t.getMessage());
+                Toast.makeText(getBaseContext(), Failed, Toast.LENGTH_LONG).show();
             }
         });
     }
+
     @VisibleForTesting
     @Nullable
-    public IdlingResource getIdlingResource(){
-        if(mIdlingResource == null){
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
             mIdlingResource = new BakingIdlingResource();
             mIdlingResource.setIdleState(false);
         }

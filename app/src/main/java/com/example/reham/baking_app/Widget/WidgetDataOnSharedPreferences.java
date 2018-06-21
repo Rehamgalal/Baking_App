@@ -4,16 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.example.reham.baking_app.Strings;
+
 /**
  * Created by reham on 6/14/2018.
  */
 
-public class WidgetDataOnSharedPreferences {
+public class WidgetDataOnSharedPreferences implements Strings{
 
-    private static final String ID = "package com.example.android.bakingapp.data.id";
-    private static final String INGREDIENTS_KEY = "package com.example.android.bakingapp.data.ingredients";
-    private static final int DEFAULT_ID= 0;
-    private static final String DEFAULT_INGREDIENTS = "Ingredients Name";
 
     private WidgetDataOnSharedPreferences(){
 

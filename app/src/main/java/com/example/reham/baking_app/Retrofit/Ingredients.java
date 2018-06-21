@@ -15,11 +15,13 @@ public class Ingredients {
     String Measure;
     @SerializedName("ingredient")
     String Ingredient;
-    public Ingredients(double quantity,String measure,String ingredient){
-        Quantity=quantity;
-        Measure=measure;
-        Ingredient=ingredient;
+
+    public Ingredients(double quantity, String measure, String ingredient) {
+        Quantity = quantity;
+        Measure = measure;
+        Ingredient = ingredient;
     }
+
     public double getQuantity() {
         return Quantity;
     }

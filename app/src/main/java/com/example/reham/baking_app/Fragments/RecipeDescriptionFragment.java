@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.example.reham.baking_app.R;
 import com.example.reham.baking_app.Adapters.RecipeDescriptionAdapter;
@@ -23,6 +24,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.reham.baking_app.Strings.Failed;
+
 /**
  * Created by reham on 6/6/2018.
  */
@@ -35,10 +38,11 @@ public class RecipeDescriptionFragment extends Fragment {
     List<String> longDescription;
     List<String> videoURL;
     List<String> thumbnailURL;
-    int id ;
+    int id;
+
     // OnImageClickListener interface, calls a method in the host activity named onImageSelected
     public interface OnStepClickListener {
-        void onStepSelected(int position,List<String> longDescription,List<String> videoURL,List<String>thumbnailURL);
+        void onStepSelected(int position, List<String> longDescription, List<String> videoURL, List<String> thumbnailURL);
     }
 
     // Override onAttach to make sure that the container activity has implemented the callback
@@ -69,38 +73,38 @@ public class RecipeDescriptionFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_body, container, false);
         // Get a reference to the GridView in the fragment_master_list xml layout file
         gridView = rootView.findViewById(R.id.text);
-        com.example.reham.baking_app.RecipeDetails recipeDetails=(com.example.reham.baking_app.RecipeDetails)getActivity();
-        id= recipeDetails.getId();
-        Log.i("id",id+"  ");
-        Retrofit2 apiService=ApiClient.getClient().create(Retrofit2.class);
-        Call<List<Recipes>> call=  apiService.getRecipe();
+        com.example.reham.baking_app.RecipeDetails recipeDetails = (com.example.reham.baking_app.RecipeDetails) getActivity();
+        id = recipeDetails.getId();
+        Log.i("id", id + "  ");
+        Retrofit2 apiService = ApiClient.getClient().create(Retrofit2.class);
+        Call<List<Recipes>> call = apiService.getRecipe();
         call.enqueue(new Callback<List<Recipes>>() {
             @Override
             public void onResponse(Call<List<Recipes>> call, Response<List<Recipes>> response) {
-                DecimalFormat format= new DecimalFormat();
-                mSteps=new ArrayList<>();
-                longDescription= new ArrayList<>();
-                videoURL= new ArrayList<>();
-                thumbnailURL= new ArrayList<>();
-                StringBuilder sb= new StringBuilder();
-                List<Ingredients> ingredients= response.body().get(id).getIngredients();
-                for(int i= 0 ; i<ingredients.size();i++){
-                    double q=  ingredients.get(i).getQuantity();
-                   String quantity=String.valueOf(format.format(q));
-                   String measure= ingredients.get(i).getMeasure();
-                   String ingredient= ingredients.get(i).getIngredient();
-                   sb.append(quantity+" ");
-                   sb.append(measure+" of ");
-                   sb.append(ingredient+"\n");
+                DecimalFormat format = new DecimalFormat();
+                mSteps = new ArrayList<>();
+                longDescription = new ArrayList<>();
+                videoURL = new ArrayList<>();
+                thumbnailURL = new ArrayList<>();
+                StringBuilder sb = new StringBuilder();
+                List<Ingredients> ingredients = response.body().get(id).getIngredients();
+                for (int i = 0; i < ingredients.size(); i++) {
+                    double q = ingredients.get(i).getQuantity();
+                    String quantity = String.valueOf(format.format(q));
+                    String measure = ingredients.get(i).getMeasure();
+                    String ingredient = ingredients.get(i).getIngredient();
+                    sb.append(quantity + " ");
+                    sb.append(measure + " of ");
+                    sb.append(ingredient + "\n");
                 }
                 mSteps.add(sb.toString());
                 longDescription.add(sb.toString());
-                List<RecipeDetails> steps= response.body().get(id).getSteps();
-                for(int o = 0;o<steps.size();o++){
-                    String step= steps.get(o).getShortDescription();
-                    String longDes= steps.get(o).getDescription();
-                    String video= steps.get(o).getVideoURL();
-                    String thumbnail=steps.get(o).getThmbnaiURL();
+                List<RecipeDetails> steps = response.body().get(id).getSteps();
+                for (int o = 0; o < steps.size(); o++) {
+                    String step = steps.get(o).getShortDescription();
+                    String longDes = steps.get(o).getDescription();
+                    String video = steps.get(o).getVideoURL();
+                    String thumbnail = steps.get(o).getThmbnaiURL();
                     mSteps.add(step);
                     longDescription.add(longDes);
                     videoURL.add(video);
@@ -108,13 +112,14 @@ public class RecipeDescriptionFragment extends Fragment {
                 }
                 // Create the adapter
                 // This adapter takes in the context and an ArrayList of ALL the image resources to display
-                RecipeDescriptionAdapter mAdapter = new RecipeDescriptionAdapter(getActivity(),mSteps );
+                RecipeDescriptionAdapter mAdapter = new RecipeDescriptionAdapter(getActivity(), mSteps);
                 // Set the adapter on the GridView
                 gridView.setAdapter(mAdapter);
             }
+
             @Override
             public void onFailure(Call<List<Recipes>> call, Throwable t) {
-                Log.e("onFailure",t.getMessage());
+                Toast.makeText(getActivity(), Failed, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -124,7 +129,7 @@ public class RecipeDescriptionFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Trigger the callback method and pass in the position that was clicked
-                mCallback.onStepSelected(position,longDescription,videoURL,thumbnailURL);
+                mCallback.onStepSelected(position, longDescription, videoURL, thumbnailURL);
             }
         });
 

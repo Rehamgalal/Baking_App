@@ -13,6 +13,8 @@ import com.example.reham.baking_app.RecipeDetails;
 
 import java.util.List;
 
+import static com.example.reham.baking_app.Strings.IdText;
+
 /**
  * Created by reham on 6/6/2018.
  */
@@ -20,10 +22,12 @@ import java.util.List;
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHolder> {
     Context mContext;
     List<String> recipesNames;
-    public RecipesAdapter(Context context , List<String> names,List<Integer> ids){
-        mContext=context;
-        recipesNames=names;
+
+    public RecipesAdapter(Context context, List<String> names, List<Integer> ids) {
+        mContext = context;
+        recipesNames = names;
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater mInflater;
@@ -43,20 +47,22 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
     public int getItemCount() {
         return recipesNames.size();
     }
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView recipeText;
+
         public ViewHolder(View itemView) {
             super(itemView);
-           recipeText=itemView.findViewById(R.id.item_view);
-           itemView.setOnClickListener(this);
+            recipeText = itemView.findViewById(R.id.item_view);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(mContext,RecipeDetails.class);
-           int id = getAdapterPosition();
-           intent.putExtra("id",id);
+            Intent intent = new Intent(mContext, RecipeDetails.class);
+            int id = getAdapterPosition();
+            intent.putExtra(IdText, id);
             mContext.startActivity(intent);
         }
     }

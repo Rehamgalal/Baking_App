@@ -17,10 +17,12 @@ import java.util.List;
 public class RecipeDescriptionAdapter extends BaseAdapter {
     Context mContext;
     List<String> Description;
-    public  RecipeDescriptionAdapter(Context context , List<String> description){
-        mContext=context;
-        Description=description;
+
+    public RecipeDescriptionAdapter(Context context, List<String> description) {
+        mContext = context;
+        Description = description;
     }
+
     @Override
     public int getCount() {
         return Description.size();
@@ -42,7 +44,7 @@ public class RecipeDescriptionAdapter extends BaseAdapter {
         if (convertView == null) {
             // If the view is not recycled, this creates a new ImageView to hold an image
             textView = new TextView(mContext);
-            textView.setPadding(8,8,8,8);
+            textView.setPadding(8, 8, 8, 8);
             textView.setTextSize(20f);
         } else {
             textView = (TextView) convertView;
@@ -53,5 +55,5 @@ public class RecipeDescriptionAdapter extends BaseAdapter {
         textView.setText(Description.get(position));
         return textView;
     }
-    }
+}
 

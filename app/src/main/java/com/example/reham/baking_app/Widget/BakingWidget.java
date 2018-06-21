@@ -13,6 +13,8 @@ import com.example.reham.baking_app.RecipeDetails;
 
 import java.net.IDN;
 
+import static com.example.reham.baking_app.Strings.IdText;
+
 /**
  * Implementation of App Widget functionality.
  */
@@ -38,7 +40,7 @@ public class BakingWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.widget_text_view, ingredients);
         Intent intent = new Intent(context, RecipeDetails.class);
         int Id=Integer.parseInt(id);
-        intent.putExtra("id",Id);
+        intent.putExtra(IdText,Id);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,0 , intent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setOnClickPendingIntent(R.id.widget_text_view, pendingIntent);
         return views;

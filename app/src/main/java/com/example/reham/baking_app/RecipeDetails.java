@@ -18,76 +18,82 @@ import com.example.reham.baking_app.Widget.WidgetDataOnSharedPreferences;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecipeDetails extends AppCompatActivity implements RecipeDescriptionFragment.OnStepClickListener {
+public class RecipeDetails extends AppCompatActivity implements RecipeDescriptionFragment.OnStepClickListener, Strings {
     int id;
     boolean mTwoPane;
     String description;
     String thumbnailUrl;
     String videoUrl;
     android.support.v4.app.FragmentManager manager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
-        id = i.getIntExtra("id", 1);
+        id = i.getIntExtra(IdText, 1);
         setContentView(R.layout.activity_recipe_details);
-        if(findViewById(R.id.recipe_layout)!=null){
-            mTwoPane=true;
-            if(savedInstanceState==null){
-               Bundle bundle= new Bundle();
-                bundle.putString("description",description);
-                if (videoUrl!=null&&!videoUrl.equals("")){
-                    bundle.putString("videoURL",videoUrl);
-                }else if (thumbnailUrl!=null&&!thumbnailUrl.equals("")){
-                    bundle.putString("thumbnail",thumbnailUrl);}
-                StepFragment stepFragment= new StepFragment();
-                manager= getSupportFragmentManager();
+        if (findViewById(R.id.recipe_layout) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                Bundle bundle = new Bundle();
+                bundle.putString(descriptionText, description);
+                if (videoUrl != null && !videoUrl.equals("")) {
+                    bundle.putString(VideoUrlText, videoUrl);
+                } else if (thumbnailUrl != null && !thumbnailUrl.equals("")) {
+                    bundle.putString(thumbnailUrl, thumbnailUrl);
+                }
+                StepFragment stepFragment = new StepFragment();
+                manager = getSupportFragmentManager();
                 stepFragment.setArguments(bundle);
-                manager.beginTransaction().add(R.id.detail_view,stepFragment).commit();
+                manager.beginTransaction().add(R.id.detail_view, stepFragment).commit();
 
 
             }
-        }else {mTwoPane=false;}
+        } else {
+            mTwoPane = false;
+        }
     }
 
     public int getId() {
-        Log.i("id", id + "");
         return id;
     }
 
     @Override
     public void onStepSelected(int position, List<String> longDescription, List<String> videoURL, List<String> thumbnailURL) {
-       WidgetDataOnSharedPreferences.saveWidgetDataOnSharedPreferences(this,id,longDescription.get(0));
+        WidgetDataOnSharedPreferences.saveWidgetDataOnSharedPreferences(this, id, longDescription.get(0));
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(),BakingWidget.class));
-        BakingWidget bakingWidget= new BakingWidget();
-        bakingWidget.onUpdate(this,appWidgetManager,ids);
+        int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), BakingWidget.class));
+        BakingWidget bakingWidget = new BakingWidget();
+        bakingWidget.onUpdate(this, appWidgetManager, ids);
         //Now update all widgets
         BakingWidget.getUpdatedRemoteViews(this);
-        if (mTwoPane){
-            if (position>0){
-                int i = position-1;
-            description=longDescription.get(position);
-            videoUrl=videoURL.get(i);
-            thumbnailUrl=thumbnailURL.get(i);
-            Bundle b= new Bundle();
-                b.putString("description",description);
-                if (videoUrl!=null&&!videoUrl.equals("")){
-                    b.putString("videoURL",videoUrl);
-                }else if (thumbnailUrl!=null&&!thumbnailUrl.equals("")){
-                    b.putString("thumbnail",thumbnailUrl);}
-            StepFragment stepFragment= new StepFragment();
-            stepFragment.setArguments(b);
-            manager.beginTransaction().replace(R.id.detail_view,stepFragment).commit();}
+        if (mTwoPane) {
+            if (position > 0) {
+                int i = position - 1;
+                description = longDescription.get(position);
+                videoUrl = videoURL.get(i);
+                thumbnailUrl = thumbnailURL.get(i);
+                Bundle b = new Bundle();
+                b.putString(descriptionText, description);
+                if (videoUrl != null && !videoUrl.equals("")) {
+                    b.putString(VideoUrlText, videoUrl);
+                } else if (thumbnailUrl != null && !thumbnailUrl.equals("")) {
+                    b.putString(thumbnailUrlText, thumbnailUrl);
+                }
+                StepFragment stepFragment = new StepFragment();
+                stepFragment.setArguments(b);
+                manager.beginTransaction().replace(R.id.detail_view, stepFragment).commit();
+            }
+        } else if (!mTwoPane) {
+            Intent intent = new Intent(this, StepActivity.class);
+            if (position > 0) {
+                intent.putExtra(positionText, position);
+                intent.putStringArrayListExtra(descriptionText, (ArrayList<String>) longDescription);
+                intent.putStringArrayListExtra(VideoUrlText, (ArrayList<String>) videoURL);
+                intent.putStringArrayListExtra(thumbnailUrlText, (ArrayList<String>) thumbnailURL);
+                startActivity(intent);
+            } else {
+            }
         }
-       else if (!mTwoPane){
-        Intent intent=new Intent(this,StepActivity.class);
-        if (position>0){
-        intent.putExtra("position",position);
-        intent.putStringArrayListExtra("description",(ArrayList<String>) longDescription);
-        intent.putStringArrayListExtra("videoURL",(ArrayList<String>) videoURL);
-        intent.putStringArrayListExtra("thumbnailURL",(ArrayList<String>) thumbnailURL);
-        startActivity(intent);}
-        else {}
     }
-}}
+}

@@ -19,12 +19,13 @@ public class RecipeDetails {
     String videoURL;
     @SerializedName("thumbnailURL")
     String thmbnaiURL;
-    public RecipeDetails(int id,String shortdescription,String description,String videoUrl,String thmbnaiUrl){
-        Id=id;
-        shortDescription=shortdescription;
-        Description=description;
-        videoURL=videoUrl;
-        thmbnaiURL=thmbnaiUrl;
+
+    public RecipeDetails(int id, String shortdescription, String description, String videoUrl, String thmbnaiUrl) {
+        Id = id;
+        shortDescription = shortdescription;
+        Description = description;
+        videoURL = videoUrl;
+        thmbnaiURL = thmbnaiUrl;
 
     }
 

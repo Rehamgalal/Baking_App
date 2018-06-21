@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by reham on 6/17/2018.
  */
 
-public class BakingIdlingResource implements android.support.test.espresso.IdlingResource{
+public class BakingIdlingResource implements android.support.test.espresso.IdlingResource {
     @Nullable
     private volatile android.support.test.espresso.IdlingResource.ResourceCallback mCallback;
 
@@ -32,6 +32,7 @@ public class BakingIdlingResource implements android.support.test.espresso.Idlin
 
     /**
      * Sets the new idle state, if isIdleNow is true, it pings the {@link ResourceCallback}.
+     *
      * @param isIdleNow false if there are pending operations, true if idle.
      */
     public void setIdleState(boolean isIdleNow) {

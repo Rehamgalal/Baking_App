@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.reham.baking_app.R;
+import com.example.reham.baking_app.Strings;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -26,7 +27,7 @@ import com.google.android.exoplayer2.util.Util;
  * Created by reham on 6/8/2018.
  */
 
-public class StepFragment extends Fragment {
+public class StepFragment extends Fragment implements Strings {
 
     private SimpleExoPlayer player;
     private PlayerView playerView;
@@ -34,6 +35,7 @@ public class StepFragment extends Fragment {
     private long playbackPosition;
     private int currentWindow;
     private boolean playWhenReady = true;
+
     public StepFragment() {
     }
 
@@ -45,58 +47,64 @@ public class StepFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_steps, container, false);
         TextView textView = rootView.findViewById(R.id.description_view);
-        playerView =(PlayerView) rootView.findViewById(R.id.video_player);
-        if (getArguments().getString("mTwoPane") != null&& getArguments().getString("mTwoPane").equals("onePane") ) {
-            mOnePane=true;
-        }else {mOnePane=false;}
-        if (getArguments().getString("description") != null && !getArguments().getString("description").equals("")) {
-        String description = getArguments().getString("description");
-        textView.setText(description);}
-        if (getArguments().getString("videoURL") != null && !getArguments().getString("videoURL").equals("")) {
-            Content = getArguments().getString("videoURL");
+        playerView = (PlayerView) rootView.findViewById(R.id.video_player);
+        if (getArguments().getString(mTwoPaneText) != null && getArguments().getString(mTwoPaneText).equals("onePane")) {
+            mOnePane = true;
+        } else {
+            mOnePane = false;
+        }
+        if (getArguments().getString(descriptionText) != null && !getArguments().getString(descriptionText).equals("")) {
+            String description = getArguments().getString(descriptionText);
+            textView.setText(description);
+        }
+        if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals("")) {
+            Content = getArguments().getString(VideoUrlText);
             Uri uri = Uri.parse(Content);
             initializePlayer();
-        } else if (getArguments().getString("thumbnail") != null && !getArguments().getString("thumbnail").equals("")) {
-            Content = getArguments().getString("thumbnail");
+        } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals("")) {
+            Content = getArguments().getString(thumbnailUrlText);
             initializePlayer();
-        } 
+        }
 
         return rootView;
     }
+
     @Override
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            if (getArguments().getString("videoURL") != null && !getArguments().getString("videoURL").equals("")) {
-                Content = getArguments().getString("videoURL");
+            if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals("")) {
+                Content = getArguments().getString(VideoUrlText);
                 Uri uri = Uri.parse(Content);
                 initializePlayer();
-            } else if (getArguments().getString("thumbnail") != null && !getArguments().getString("thumbnail").equals("")) {
-                Content = getArguments().getString("thumbnail");
+            } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals("")) {
+                Content = getArguments().getString(thumbnailUrlText);
                 initializePlayer();
-            } else {
-                playerView.setVisibility(View.INVISIBLE);
-            }} }
+            }
+        }
+    }
 
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
-        hideSystemUi();
-        if ((Util.SDK_INT <= 23 || player == null))
-        {    if (getArguments().getString("videoURL") != null && !getArguments().getString("videoURL").equals("")) {
-            Content = getArguments().getString("videoURL");
-            Uri uri = Uri.parse(Content);
-            initializePlayer();
-        } else if (getArguments().getString("thumbnail") != null && !getArguments().getString("thumbnail").equals("")) {
-            Content = getArguments().getString("thumbnail");
-            initializePlayer();
-        } else {
-            playerView.setVisibility(View.INVISIBLE);
-        }} }
+        if (mOnePane) hideSystemUi();
+        if ((Util.SDK_INT <= 23 || player == null)) {
+            if (getArguments().getString(VideoUrlText) != null && !getArguments().getString(VideoUrlText).equals("")) {
+                Content = getArguments().getString(VideoUrlText);
+                Uri uri = Uri.parse(Content);
+                initializePlayer();
+            } else if (getArguments().getString(thumbnailUrlText) != null && !getArguments().getString(thumbnailUrlText).equals("")) {
+                Content = getArguments().getString(thumbnailUrlText);
+                initializePlayer();
+            }
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
         if (Util.SDK_INT <= 23) {
-           releasePlayer();
+            releasePlayer();
         }
     }
 
@@ -104,7 +112,7 @@ public class StepFragment extends Fragment {
     public void onStop() {
         super.onStop();
         if (Util.SDK_INT > 23) {
-          releasePlayer();
+            releasePlayer();
         }
     }
 

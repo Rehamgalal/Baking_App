@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="135dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linear_view"
-    android:layout_centerInParent="true">
-<TextView
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/item_view"
-    android:layout_gravity="center"
-    android:gravity="center"
-    android:textAlignment="center"
-    android:textSize="40sp"
-    android:textStyle="bold"
-    />
+    android:layout_height="@dimen/RecyclerViewHeight"
+    android:layout_centerInParent="true">
+
+    <TextView
+        android:id="@+id/item_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="@dimen/TextSize"
+        android:textStyle="bold" />
 </LinearLayout>
